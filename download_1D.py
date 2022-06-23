@@ -10,38 +10,35 @@ import requests
 BASES = [
     "1INCH",
     "AAVE",
+    "ADA",
     "BAT",
     "BLZ",
     "BUSD",
-    "C98",
+    # "C98",
     # "DAI",
     "ENJ",
     "KNC",
     "LINK",
     "LRC",
+    "LTC",
     "MANA",
     "MATIC",
     "OGN",
     "OMG",
-    "SNT",
+    # "SNT",
     "SNX",
     "USDC",
     "USDT",
     "BTC",  # WBTC
+    "XMR",
     "ZRX",
 ]
 
 QUOTES = ["ETH", "USDT"]
 
 FOLDER = "data/"
-
-# https://data.binance.vision/?prefix=data/spot/daily/klines/BATETH/1m/
-# https://data.binance.vision/data/spot/daily/klines/BATETH/1m/BATETH-1m-2021-03-10.zip
-# https://data.binance.vision/data/spot/monthly/klines/AAVEETH/1m/AAVEETH-1m-2021-12.zip
 BASE_URL = "https://data.binance.vision/data/spot/"
-# MONTHLY = f"{BASE_URL}monthly/klines/"
 DAILY = f"{BASE_URL}daily/klines/"
-# sym = "BATETH"
 
 
 def download_zip_file(url, filename=None, extract=False):
@@ -107,10 +104,7 @@ def binance_1d_hist_daily(
 
 def main():
     """Run the programm."""
-    # token_eth = [i + QUOTES[0] for i in BASES if i != QUOTES[0]]
     token_usdt = [i + QUOTES[1] for i in BASES if i not in QUOTES]
-    # append ETHUSDT
-    # token_usdt.extend(["ETHUSDT", "USDTDAI"])
 
     start = time()
     # -- DAILY --
@@ -121,18 +115,17 @@ def main():
         token_usdt, start_d, today, extract=True, verbose=False
     )
     print(missing)
-    # if len(missing) > 0:
-    #     missing = [i.replace("USDT", "ETH") for i in missing]
-    #     binance_1d_hist_daily(missing, start_d, today, extract=True, verbose=True)
-    # ---------------
 
     end = time()
     print(f"\nTotal time taken: {end - start}sec")
 
     # Clean up
-    for p in Path(FOLDER).glob("**/*"):
-        if p.is_dir() and len(list(p.iterdir())) == 0:
-            os.removedirs(p)
+    try:
+        for p in Path(FOLDER).glob("**/*"):
+            if p.is_dir() and len(list(p.iterdir())) == 0:
+                os.removedirs(p)
+    except Exception as ex:
+        print("Clean up could not be completed: ", ex)
 
 
 if __name__ == "__main__":
